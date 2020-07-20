@@ -8,6 +8,7 @@ from rlcard.utils import print_card
 
 # Make environment
 # Set 'record_action' to True because we need it to print results
+print("test")
 env = rlcard.make('leduc-holdem', config={'record_action': True})
 human_agent = HumanAgent(env.action_num)
 cfr_agent = models.load('leduc-holdem-cfr').agents[0]
