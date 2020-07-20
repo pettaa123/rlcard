@@ -40,6 +40,7 @@ class KarmaRound(object):
             players (list): list of KarmaPlayer objects
             top_card (object): object of KarmaCard
         '''
+		#this is the action stuff
         if top_card.trait == '8':
             self.current_player = 1
         #elif top_card.trait == 'reverse':
