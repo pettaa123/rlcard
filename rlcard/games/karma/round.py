@@ -62,21 +62,24 @@ class KarmaRound(object):
             self._perform_draw_action(players)
             return None
         player = players[self.current_player]
-        card_info = action.split('-')
-        color = card_info[0]
-        trait = card_info[1]
-        # remove correspongding card
+        #card_info = action.split('-')
+        #number_of_cards_to_play = card_info[1]
+        card_info=action
+        trait = card_info[0]
+        # remove corresponding card
         remove_index = None
-        if trait == 'wild' or trait == 'wild_draw_4':
-            for index, card in enumerate(player.hand):
-                if trait == card.trait:
-                    remove_index = index
-                    break
+        #if trait == 'wild' or trait == 'wild_draw_4':
+        for index, card in enumerate(player.hand):
+            if trait == card.trait:
+                remove_index = index
+                break
+        '''
         else:
             for index, card in enumerate(player.hand):
                 if color == card.color and trait == card.trait:
                     remove_index = index
                     break
+        '''
         card = player.hand.pop(remove_index)
         if not player.hand:
             self.is_over = True
@@ -84,37 +87,47 @@ class KarmaRound(object):
         self.played_cards.append(card)
 
         # perform the number action
-        if card.type == 'number':
+        if card.type == 'number' and card.trait != '8':
             self.current_player = (self.current_player + self.direction) % self.num_players
-            self.target = card
+            self.target = self.target
+            
 
         # perform non-number action
         else:
-            self._preform_non_number_action(players, card)
+            self._perform_non_number_action(players, card) #non number is 8 and 10, maybe 3
 
     def get_legal_actions(self, players, player_id):
         wild_flag = 0
-        wild_draw_4_flag = 0
+        #wild_draw_4_flag = 0
         legal_actions = []
-        wild_4_actions = []
+        #wild_4_actions = []
         hand = players[player_id].hand
         target = self.target
         
         #target is skip
-        if target.trait == '8':
-            legal_actions = ['skip']
+        #if target.trait == '8':
+        #    legal_actions = ['skip']
             
         
-        else:
-            for card in hand:
-                if card.type == 'wild':
+        #else:
+        for card in hand:
+            #2,3,10 are wilds
+            if card.type == 'wild':
+                legal_actions.append(card.str)
+                    
+            elif target.get_index() == KarmaCard.info['trait'].index('3'): # one can act every card on threes
+                legal_actions.append(card.str)
+                    
+            elif target.get_index() == KarmaCard.info['trait'].index('7'): #value 7 -> lower
+                if card.get_index() <= target.get_index():
                     legal_actions.append(card.str)
+
+                    
+            elif card.get_index() >= target.get_index():
+                legal_actions.append(card.str)
                 
-                elif card.get_index() >= target.get_index():
-                    legal_actions.append(card.str)
-                
-            if not legal_actions:
-                legal_actions = ['draw']
+        if not legal_actions:
+            legal_actions = ['draw']
                 
 
         return legal_actions
@@ -197,7 +210,7 @@ class KarmaRound(object):
             #return None
 
         card = self.dealer.deck.pop()
-
+        '''
         # draw a wild card
         if card.type == 'wild':
             card.color = self.np_random.choice(KarmaCard.info['color'])
@@ -213,14 +226,16 @@ class KarmaRound(object):
                 self.current_player = (self.current_player + self.direction) % self.num_players
             else:
                 self.played_cards.append(card)
-                self._preform_non_number_action(players, card)
+                self._perform_non_number_action(players, card)
 
         # draw a card with the diffrent color of target
+        
         else:
-            players[self.current_player].hand.append(card)
-            self.current_player = (self.current_player + self.direction) % self.num_players
+        '''
+        players[self.current_player].hand.append(card)
+        self.current_player = (self.current_player + self.direction) % self.num_players
 
-    def _preform_non_number_action(self, players, card):
+    def _perform_non_number_action(self, players, card):
         current = self.current_player
         direction = self.direction
         num_players = self.num_players
@@ -229,7 +244,7 @@ class KarmaRound(object):
         if card.trait == 'reverse':
             self.direction = -1 * direction
 
-        # perfrom skip card
+        # perform skip card
         elif card.trait == 'skip':
             current = (current + direction) % num_players
 
@@ -243,7 +258,7 @@ class KarmaRound(object):
             self.dealer.deal_cards(players[(current + direction) % num_players], 2)
             current = (current + direction) % num_players
 
-        # perfrom wild_draw_4 card
+        # perform wild_draw_4 card
         elif card.trait == 'wild_draw_4':
             if len(self.dealer.deck) < 4:
                 self.replace_deck()

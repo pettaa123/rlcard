@@ -25,10 +25,10 @@ class KarmaEnv(Env):
         return models.load('karma-rule-v1')
 
     def _extract_state(self, state):
-        obs = np.zeros((9, 13), dtype=int)
-        encode_hand(obs[:3], state['hand'])
-        encode_target(obs[4:6], state['target'])
-        encode_hand(obs[7:9], state['others_hand'])
+        obs = np.zeros((3, 4, 13), dtype=int)
+        encode_hand(obs[0], state['hand'])
+        encode_target(obs[1], state['target'])
+        encode_hand(obs[2], state['others_hand'])
         legal_action_id = self._get_legal_actions()
         extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
         if self.allow_raw_data:
