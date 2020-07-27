@@ -2,13 +2,12 @@ from termcolor import colored
 
 class KarmaCard(object):
 
-    info = {'type':  ['number', 'action', 'wild'],
-            'trait': ['2', '3', '4', '5', '6', '7', '8', '9','10'
-                      'J', 'Q', 'K', 'A']
+    info = {'type':  ['number', 'wild'],
+            'trait': ['4', '5', '6', '7', '8', '9', 'J', 'Q', 'K', 'A', '2', '3', '10']
             }
 
-    def __init__(self, card_type, color, trait):
-        ''' Initialize the class of KarmaCard
+    def __init__(self, card_type, trait):
+        ''' Initialize the class of UnoCard
 
         Args:
             card_type (str): The type of card
@@ -25,6 +24,16 @@ class KarmaCard(object):
             (str): The string of card's trait
         '''
         return self.trait
+    
+    def get_index(self):
+        ''' Get the index of trait
+
+        Return:
+            (int): The index of card's trait (value)
+        '''
+        print(self.info['trait'].index(self.trait))
+        return self.info['trait'].index(self.trait)
+        
 
 
     @staticmethod
@@ -37,10 +46,7 @@ class KarmaCard(object):
         if isinstance(cards, str):
             cards = [cards]
         for i, card in enumerate(cards):
-            trait = card
-
-            print(trait, end='')
-
-
+            print(card, end='')
+                            
             if i < len(cards) - 1:
                 print(', ', end='')

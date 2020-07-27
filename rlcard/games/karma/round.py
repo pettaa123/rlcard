@@ -1,5 +1,5 @@
 from rlcard.games.karma.card import KarmaCard
-from rlcard.games.karma.utils import cards2list, WILD, WILD_DRAW_4
+from rlcard.games.karma.utils import cards2list, WILD
 
 
 class KarmaRound(object):
@@ -8,7 +8,7 @@ class KarmaRound(object):
         ''' Initialize the round class
 
         Args:
-            dealer (object): the object of KarmaDealer
+            dealer (object): the object of UnoDealer
             num_players (int): the number of players in game
         '''
         self.np_random = np_random
@@ -16,7 +16,7 @@ class KarmaRound(object):
         self.target = None
         self.current_player = 0
         self.num_players = num_players
-        #self.direction = 1
+        self.direction = 1
         self.played_cards = []
         self.is_over = False
         self.winner = None
@@ -25,10 +25,12 @@ class KarmaRound(object):
         ''' Flip the top card of the card pile
 
         Returns:
-            (object of KarmaCard): the top card in game
+            (object of UnoCard): the top card in game
 
         '''
         top = self.dealer.flip_top_card()
+        # if top.trait == 'wild':
+        #     top.color = self.np_random.choice(UnoCard.info['color'])
         self.target = top
         self.played_cards.append(top)
         return top
@@ -37,29 +39,28 @@ class KarmaRound(object):
         ''' Perform the top card
 
         Args:
-            players (list): list of KarmaPlayer objects
-            top_card (object): object of KarmaCard
+            players (list): list of UnoPlayer objects
+            top_card (object): object of UnoCard
         '''
-		#this is the action stuff
-        if top_card.trait == '8':
+        if top_card.trait == 'skip':
             self.current_player = 1
-        #elif top_card.trait == 'reverse':
-            #self.direction = -1
-            #self.current_player = (0 + self.direction) % self.num_players
-        #elif top_card.trait == 'draw_2':
-            #player = players[self.current_player]
-            #self.dealer.deal_cards(player, 2)
+        elif top_card.trait == 'reverse':
+            self.direction = -1
+            self.current_player = (0 + self.direction) % self.num_players
+        elif top_card.trait == 'draw_2':
+            player = players[self.current_player]
+            self.dealer.deal_cards(player, 2)
 
     def proceed_round(self, players, action):
         ''' Call other Classes's functions to keep one round running
 
         Args:
-            player (object): object of KarmaPlayer
+            player (object): object of UnoPlayer
             action (str): string of legal action
         '''
-        #if action == 'draw':
-        #    self._perform_draw_action(players)
-        #    return None
+        if action == 'draw':
+            self._perform_draw_action(players)
+            return None
         player = players[self.current_player]
         card_info = action.split('-')
         color = card_info[0]
@@ -98,45 +99,70 @@ class KarmaRound(object):
         wild_4_actions = []
         hand = players[player_id].hand
         target = self.target
-        if target.type == 'wild':
-            for card in hand:
-                if card.type == 'wild':
-                    if card.trait == 'wild_draw_4':
-                        if wild_draw_4_flag == 0:
-                            wild_draw_4_flag = 1
-                            wild_4_actions.extend(WILD_DRAW_4)
-                    else:
-                        if wild_flag == 0:
-                            wild_flag = 1
-                            legal_actions.extend(WILD)
-                elif card.color == target.color:
-                    legal_actions.append(card.str)
-
-        # target is aciton card or number card
+        
+        #target is skip
+        if target.trait == '8':
+            legal_actions = ['skip']
+            
+        
         else:
             for card in hand:
                 if card.type == 'wild':
-                    if card.trait == 'wild_draw_4':
-                        if wild_draw_4_flag == 0:
-                            wild_draw_4_flag = 1
-                            wild_4_actions.extend(WILD_DRAW_4)
-                    else:
-                        if wild_flag == 0:
-                            wild_flag = 1
-                            legal_actions.extend(WILD)
-                elif card.color == target.color or card.trait == target.trait:
                     legal_actions.append(card.str)
-        if not legal_actions:
-            legal_actions = wild_4_actions
-        if not legal_actions:
-            legal_actions = ['draw']
+                
+                elif card.get_index() >= target.get_index():
+                    legal_actions.append(card.str)
+                
+            if not legal_actions:
+                legal_actions = ['draw']
+                
+
         return legal_actions
+                
+            
+        
+        # target is aciton card or number card
+        
+        
+        # #if target.type == 'wild':
+        # for card in hand:
+        #     if card.type == 'wild':
+        #         if card.trait == 'wild_draw_4':
+        #             if wild_draw_4_flag == 0:
+        #                 wild_draw_4_flag = 1
+        #                 wild_4_actions.extend(WILD_DRAW_4)
+        #         else:
+        #             if wild_flag == 0:
+        #                 wild_flag = 1
+        #                 legal_actions.extend(WILD)
+        #     elif card.color == target.color:
+        #         legal_actions.append(card.str)
+
+        # target is aciton card or number card
+        #else:
+        # for card in hand:
+        #     if card.type == 'wild':
+        #         if card.trait == 'wild_draw_4':
+        #             if wild_draw_4_flag == 0:
+        #                 wild_draw_4_flag = 1
+        #                 wild_4_actions.extend(WILD_DRAW_4)
+        #         else:
+        #             if wild_flag == 0:
+        #                 wild_flag = 1
+        #                 legal_actions.extend(WILD)
+        #     elif card.color == target.color or card.trait == target.trait:
+        #         legal_actions.append(card.str)
+        # if not legal_actions:
+        #     legal_actions = wild_4_actions
+        # if not legal_actions:
+        #     legal_actions = ['draw']
+        # return legal_actions
 
     def get_state(self, players, player_id):
         ''' Get player's state
 
         Args:
-            players (list): The list of KarmaPlayer
+            players (list): The list of UnoPlayer
             player_id (int): The id of the player
         '''
         state = {}

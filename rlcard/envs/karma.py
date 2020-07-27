@@ -10,10 +10,10 @@ from rlcard.games.karma.utils import cards2list
 class KarmaEnv(Env):
 
     def __init__(self, config):
-        self.name = 'uno'
+        self.name = 'karma'
         self.game = Game()
         super().__init__(config)
-        self.state_shape = [7, 4, 15]
+        self.state_shape = [9, 13]
 
     def _load_model(self):
         ''' Load pretrained/rule model
@@ -22,13 +22,13 @@ class KarmaEnv(Env):
             model (Model): A Model object
         '''
         from rlcard import models
-        return models.load('uno-rule-v1')
+        return models.load('karma-rule-v1')
 
     def _extract_state(self, state):
-        obs = np.zeros((7, 4, 15), dtype=int)
+        obs = np.zeros((9, 13), dtype=int)
         encode_hand(obs[:3], state['hand'])
-        encode_target(obs[3], state['target'])
-        encode_hand(obs[4:], state['others_hand'])
+        encode_target(obs[4:6], state['target'])
+        encode_hand(obs[7:9], state['others_hand'])
         legal_action_id = self._get_legal_actions()
         extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
         if self.allow_raw_data:

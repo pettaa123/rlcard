@@ -1,3 +1,4 @@
+
 from rlcard.games.karma.utils import init_deck
 
 
@@ -23,13 +24,16 @@ class KarmaDealer(object):
         '''
         for _ in range(num):
             player.hand.append(self.deck.pop())
-            
+
     def flip_top_card(self):
         ''' Flip top card when a new game starts
 
         Returns:
-            (object): The object of UnoCard at the top of the deck
+            (object): The object of KarmaCard at the top of the deck
         '''
         top_card = self.deck.pop()
-
+        while top_card.trait == 'wild_draw_4':
+            self.deck.append(top_card)
+            self.shuffle()
+            top_card = self.deck.pop()
         return top_card
