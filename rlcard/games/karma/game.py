@@ -11,7 +11,7 @@ class KarmaGame(object):
     def __init__(self, allow_step_back=False):
         self.allow_step_back = allow_step_back
         self.np_random = np.random.RandomState()
-        self.num_players = 4
+        self.num_players = 2
         self.payoffs = [0 for _ in range(self.num_players)]
 
     def init_game(self):
@@ -32,9 +32,9 @@ class KarmaGame(object):
         # Initialize four players to play the game
         self.players = [Player(i, self.np_random) for i in range(self.num_players)]
 
-        # Deal 9 cards to each player to prepare for the game
+        # Deal 7 cards to each player to prepare for the game
         for player in self.players:
-            self.dealer.deal_cards(player, 9)
+            self.dealer.deal_cards(player, 3)
 
         # Initialize a Round
         self.round = Round(self.dealer, self.num_players, self.np_random)
@@ -134,9 +134,9 @@ class KarmaGame(object):
         ''' Return the number of applicable actions
 
         Returns:
-            (int): The number of actions. There are 13 actions
+            (int): The number of actions. There are 61 actions
         '''
-        return 13
+        return 61
 
     def get_player_id(self):
         ''' Return the current player's id

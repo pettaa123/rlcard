@@ -7,12 +7,12 @@ from rlcard.agents.karma_human_agent import HumanAgent, _print_action
 
 # Make environment and enable human mode
 # Set 'record_action' to True because we need it to print results
-env = rlcard.make('uno', config={'record_action': True})
+env = rlcard.make('karma', config={'record_action': True})
 human_agent = HumanAgent(env.action_num)
-cfr_agent = models.load('uno-rule-v1').agents[0]
+cfr_agent = models.load('karma-rule-v1').agents[0]
 env.set_agents([human_agent, cfr_agent])
 
-print(">> UNO rule model V1")
+print(">> Karma rule model V1")
 
 while (True):
     print(">> Start a new game")

@@ -15,29 +15,35 @@ with open(os.path.join(ROOT_PATH, 'games/karma/jsondata/action_space.json'), 'r'
     ACTION_SPACE = json.load(file, object_pairs_hook=OrderedDict)
     ACTION_LIST = list(ACTION_SPACE.keys())
 
+# a map of color to its index
+#COLOR_MAP = {'d': 0, 'h': 1, 's': 2, 'c': 3} #diamonds,hearts,spades,clubs
+
+COUNT_MAP = {'1': 0, '2': 1, '3': 2} #one, two or three cards of a trait
+
 
 # a map of trait to its index
-TRAIT_MAP = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
-             '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14}
+TRAIT_MAP = {'4': 0, '5': 1, '6': 2, '7': 3, '8': 4, '9': 5, 'J': 6, 'Q': 7,
+             'K': 8, 'A': 9, '2': 10, '3': 11, '10': 12}
 
-WILD = ['r-wild', 'g-wild', 'b-wild', 'y-wild']
+WILD = ['2', '3', '10']
 
 #WILD_DRAW_4 = ['r-wild_draw_4', 'g-wild_draw_4', 'b-wild_draw_4', 'y-wild_draw_4']
 
 
 def init_deck():
-    ''' Generate uno deck of 51 cards (52 minus one 4 for start)
+    ''' Generate uno deck of 52 cards
     '''
     deck = []
-    
     card_info = Card.info
-    for _ in range(4):
+    for i in range(4):
 
-        # init cards
-        for num in card_info['trait']:
+        # init number cards
+        for num in card_info['trait'][:10]:
             deck.append(Card('number', num))
-            if num != '0':
-                deck.append(Card('number', num))
+
+        # init wild cards
+        for action in card_info['trait'][10:13]:
+            deck.append(Card('wild', action))
 
     return deck
 
@@ -77,41 +83,37 @@ def encode_hand(plane, hand):
     ''' Encode hand and represerve it into plane
 
     Args:
-        plane (array): 3*4*15 numpy array
+        plane (array): 4*13 numpy array
         hand (list): list of string of hand's card
 
     Returns:
-        (array): 3*4*15 numpy array
+        (array): 4*13 numpy array
     '''
-    # plane = np.zeros((3, 4, 15), dtype=int)
-    plane[0] = np.ones((4, 15), dtype=int)
+    
+    #1 card,2 cards ,3 cards, 4 cards
+    
+    plane = np.zeros((4, 13), dtype=int)
+
     hand = hand2dict(hand)
     for card, count in hand.items():
-        card_info = card.split('-')
-        color = COLOR_MAP[card_info[0]]
-        trait = TRAIT_MAP[card_info[1]]
-        if trait >= 13:
-            if plane[1][0][trait] == 0:
-                for index in range(4):
-                    plane[0][index][trait] = 0
-                    plane[1][index][trait] = 1
-        else:
-            plane[0][color][trait] = 0
-            plane[count][color][trait] = 1
+        card_info = card
+        #color = COLOR_MAP[card_info[0]]
+        trait = TRAIT_MAP[card_info]
+        plane[count-1][trait] = 1
     return plane
 
 def encode_target(plane, target):
     ''' Encode target and represerve it into plane
 
     Args:
-        plane (array): 1*4*15 numpy array
+        plane (array): 3*13 numpy array
         target(str): string of target card
 
     Returns:
-        (array): 1*4*15 numpy array
+        (array): 3*13 numpy array 
     '''
     target_info = target.split('-')
-    color = COLOR_MAP[target_info[0]]
+    count = COUNT_MAP[target_info[0]]
     trait = TRAIT_MAP[target_info[1]]
-    plane[color][trait] = 1
+    plane[count][trait] = 1
     return plane

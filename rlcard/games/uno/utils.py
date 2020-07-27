@@ -14,7 +14,8 @@ ROOT_PATH = rlcard.__path__[0]
 with open(os.path.join(ROOT_PATH, 'games/uno/jsondata/action_space.json'), 'r') as file:
     ACTION_SPACE = json.load(file, object_pairs_hook=OrderedDict)
     ACTION_LIST = list(ACTION_SPACE.keys())
-
+    
+    
 # a map of color to its index
 COLOR_MAP = {'r': 0, 'g': 1, 'b': 2, 'y': 3}
 
