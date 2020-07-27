@@ -62,22 +62,24 @@ def cards2list(cards):
         cards_list.append(card.get_str())
     return cards_list
 
-def hand2dict(hand):
-    ''' Get the corresponding dict representation of hand
+def get_cards_dict(cards):
+    ''' Get the corresponding dict representation of cards
 
     Args:
-        hand (list): list of string of hand's card
+        cards (list): list of string of cards
 
     Returns:
-        (dict): dict of hand
+        (dict): dict of cards
     '''
-    hand_dict = {}
-    for card in hand:
-        if card not in hand_dict:
-            hand_dict[card] = 1
+    cards_dict = {}
+    for card in cards:
+        if card not in cards_dict:
+            cards_dict[card] = 1
         else:
-            hand_dict[card] += 1
-    return hand_dict
+            cards_dict[card] += 1
+    return cards_dict
+
+
 
 def encode_hand(plane, hand):
     ''' Encode hand and represerve it into plane
@@ -94,7 +96,7 @@ def encode_hand(plane, hand):
     
     plane = np.zeros((4, 13), dtype=int)
 
-    hand = hand2dict(hand)
+    hand = get_cards_dict(hand)
     for card, count in hand.items():
         card_info = card
         #color = COLOR_MAP[card_info[0]]
@@ -106,14 +108,19 @@ def encode_target(plane, target):
     ''' Encode target and represerve it into plane
 
     Args:
-        plane (array): 3*13 numpy array
+        plane (array): 4*13 numpy array
         target(str): string of target card
 
     Returns:
-        (array): 3*13 numpy array 
+        (array): 4*13 numpy array 
     '''
-    target_info = target.split('-')
-    count = COUNT_MAP[target_info[0]]
-    trait = TRAIT_MAP[target_info[1]]
-    plane[count][trait] = 1
+    
+    target = get_cards_dict(target)
+    
+    for card, count in target.items():
+        card_info = card
+        #color = COLOR_MAP[card_info[0]]
+        trait = TRAIT_MAP[card_info]
+        plane[count-1][trait] = 1
     return plane
+

@@ -31,7 +31,8 @@ class KarmaCard(object):
         Return:
             (int): The index of card's trait (value)
         '''
-        print(self.info['trait'].index(self.trait))
+
+
         return self.info['trait'].index(self.trait)
         
 
