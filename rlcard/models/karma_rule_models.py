@@ -5,6 +5,7 @@ import numpy as np
 
 import rlcard
 from rlcard.models.model import Model
+from rlcard.games.karma.card import KarmaCard
 
 class KarmaRuleAgentV1(object):
     ''' Karma Rule agent version 1
@@ -34,15 +35,28 @@ class KarmaRuleAgentV1(object):
 
         hand = state['hand']
 
+        '''
         # If we have wild-4 simply play it and choose color that appears most in hand
         for action in legal_actions:
             if action.split('-')[1] == 'wild_draw_4':
                 color_nums = self.count_colors(self.filter_wild(hand))
                 action = max(color_nums, key=color_nums.get) + '-wild_draw_4'
                 return action
+        
 
         # Without wild-4, we randomly choose one
         action = np.random.choice(self.filter_wild(legal_actions))
+        '''
+        
+        # choose card with lowest value in action list
+        lowest_val=999
+        
+        for iter_action in legal_actions:
+            val = KarmaCard.info['trait'].index(iter_action)
+            if val < lowest_val:
+                lowest_val = val
+                action = iter_action
+                
         return action
 
     def eval_step(self, state):
@@ -90,13 +104,13 @@ class KarmaRuleAgentV1(object):
         return color_nums
 
 class KarmaRuleModelV1(Model):
-    ''' UNO Rule Model version 1
+    ''' Karma Rule Model version 1
     '''
 
     def __init__(self):
         ''' Load pretrained model
         '''
-        env = rlcard.make('uno')
+        env = rlcard.make('karma')
 
         rule_agent = KarmaRuleAgentV1()
         self.rule_agents = [rule_agent for _ in range(env.player_num)]

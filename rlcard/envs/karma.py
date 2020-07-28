@@ -67,7 +67,7 @@ class KarmaEnv(Env):
         state['hand_cards'] = [cards2list(player.hand)
                                for player in self.game.players]
         state['played_cards'] = cards2list(self.game.round.played_cards)
-        state['target'] = self.game.round.target.str
+        state['target'] = cards2list(self.game.round.target)
         state['current_player'] = self.game.round.current_player
         state['legal_actions'] = self.game.round.get_legal_actions(
             self.game.players, state['current_player'])
