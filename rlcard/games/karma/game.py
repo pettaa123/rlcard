@@ -33,16 +33,16 @@ class KarmaGame(object):
         # Initialize four players to play the game
         self.players = [Player(i, self.np_random) for i in range(self.num_players)]
 
-        # Deal 3 cards to each player to prepare for the game
-        for player in self.players:
-            self.dealer.deal_cards(player, 3)
-
         # Initialize a Round
         self.round = Round(self.dealer, self.num_players, self.np_random)
 
-        # flip and perfrom top card
-        top_card = self.round.flip_top_card()
-        self.round.perform_top_card(self.players, top_card)
+        # flip top card (always 4)
+        self.round.flip_top_card()
+
+        
+        # Deal 3 cards to each player to prepare for the game
+        for player in self.players:
+            self.dealer.deal_cards(player, 3)
 
         # Save the hisory for stepping back to the last state.
         self.history = []
