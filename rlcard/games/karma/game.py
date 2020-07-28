@@ -4,6 +4,7 @@ import numpy as np
 from rlcard.games.karma import Dealer
 from rlcard.games.karma import Player
 from rlcard.games.karma import Round
+from rlcard.games.karma.utils import ACTION_SPACE
 
 
 class KarmaGame(object):
@@ -32,7 +33,7 @@ class KarmaGame(object):
         # Initialize four players to play the game
         self.players = [Player(i, self.np_random) for i in range(self.num_players)]
 
-        # Deal 7 cards to each player to prepare for the game
+        # Deal 3 cards to each player to prepare for the game
         for player in self.players:
             self.dealer.deal_cards(player, 3)
 
@@ -134,9 +135,10 @@ class KarmaGame(object):
         ''' Return the number of applicable actions
 
         Returns:
-            (int): The number of actions. There are 61 actions
-        '''
-        return 61
+            (int): The number of actions. There are 14 actions
+        '''      
+        
+        return len(ACTION_SPACE)
 
     def get_player_id(self):
         ''' Return the current player's id

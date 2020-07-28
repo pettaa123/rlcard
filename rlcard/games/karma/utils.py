@@ -71,12 +71,14 @@ def get_cards_dict(cards):
     Returns:
         (dict): dict of cards
     '''
+       
     cards_dict = {}
-    for card in cards:
-        if card not in cards_dict:
-            cards_dict[card] = 1
-        else:
-            cards_dict[card] += 1
+    if cards:
+        for card in cards:
+            if card not in cards_dict:
+                cards_dict[card] = 1
+            else:
+                cards_dict[card] += 1
     return cards_dict
 
 
