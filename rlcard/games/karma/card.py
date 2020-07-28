@@ -1,5 +1,3 @@
-from termcolor import colored
-
 class KarmaCard(object):
 
     info = {'type':  ['number', 'wild'],
@@ -13,6 +11,8 @@ class KarmaCard(object):
             card_type (str): The type of card
             trait (str): The trait of card
         '''
+        
+        self.hidden = False
         self.type = card_type
         self.trait = trait
         self.str = self.get_str()

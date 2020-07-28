@@ -36,23 +36,7 @@ class KarmaRound(object):
         #     top.color = self.np_random.choice(UnoCard.info['color'])
         self.target.append(top)
         self.played_cards.append(top)
-        return top
 
-    def perform_top_card(self, players, top_card):
-        ''' Perform the top card
-
-        Args:
-            players (list): list of UnoPlayer objects
-            top_card (object): object of UnoCard
-        '''
-        if top_card.trait == 'skip':
-            self.current_player = 1
-        elif top_card.trait == 'reverse':
-            self.direction = -1
-            self.current_player = (0 + self.direction) % self.num_players
-        elif top_card.trait == 'draw_2':
-            player = players[self.current_player]
-            self.dealer.deal_cards(player, 2)
 
     def proceed_round(self, players, action):
         ''' Call other Classes's functions to keep one round running
@@ -100,15 +84,43 @@ class KarmaRound(object):
         # perform non-number action
         else:
             self._perform_non_number_action(players, card) #non number is 8 and 10
+            
+    def check_accesibility(self, player):
+        if len(player.hand) > 0:
+            player.china_hidden_accessible = False
+            player.china_accessible = False
+        if len(player.hand) == 0 and len(player.china) > 0:
+            player.china_accessible = True
+            player.china_hidden_accessible = False
+        elif len(player.hand) == 0 and len(player.china) == 0 and len(player.china_hidden):
+            player.china_hidden_accessible = True
+            player.china_accessible = False
 
     def get_legal_actions(self, players, player_id):
         #wild_flag = 0
         #wild_draw_4_flag = 0
         legal_actions = []
         #wild_4_actions = []
-        hand = players[player_id].hand
+        
         target = self.target
         
+        #moves accessible cards into hand
+        self.check_accesibility(players[player_id])
+        
+        hand = players[player_id].hand
+        
+        if players[player_id].china_accessible == True:
+            hand = players[player_id].china
+            
+        if players[player_id].china_hidden_accessible == True:
+            for card in hand:
+                legal_actions.append(card.str)
+            
+            return legal_actions
+            
+        
+        
+
 
         #target is None
         if not target:
@@ -192,19 +204,28 @@ class KarmaRound(object):
         state = {}
         player = players[player_id]
         state['hand'] = cards2list(player.hand)
+        state['china'] = cards2list(player.china)
+        state['china_hidden'] = cards2list(player.china_hidden)
         state['target'] = cards2list(self.target)
         state['played_cards'] = cards2list(self.played_cards)
-        state['removed_cards'] = cards2list(self.played_cards)
+        state['removed_cards'] = cards2list(self.removed_cards)
         
         others_hand = []
+        others_china = []
+        others_china_hidden = []
         for player in players:
             if player.player_id != player_id:
                 others_hand.extend(player.hand)
+                others_china.extend(player.china)
+                others_china_hidden.extend(player.china_hidden)
+                
         state['others_hand'] = cards2list(others_hand)
+        state['others_china'] = cards2list(others_china)
+        state['others_china_hidden'] = cards2list(others_china_hidden)
         state['legal_actions'] = self.get_legal_actions(players, player_id)
         state['card_num'] = []
         for player in players:
-            state['card_num'].append(len(player.hand))
+            state['card_num'].append(len(player.hand)+len(player.china)+len(player.china_hidden))
         return state
 
     def replace_deck(self):
@@ -235,11 +256,11 @@ class KarmaRound(object):
         num_players = self.num_players
 
         # perform reverse card
-        if card.trait == 'reverse':
-            self.direction = -1 * direction
+        #if card.trait == 'reverse':
+        #    self.direction = -1 * direction
 
         # perform skip card
-        elif card.trait == '8':
+        if card.trait == '8':
             current = (current + direction) % num_players
             self.skipped = True
             self.target.clear()
