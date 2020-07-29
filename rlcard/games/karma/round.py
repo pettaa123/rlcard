@@ -57,12 +57,31 @@ class KarmaRound(object):
         # remove corresponding card
         remove_index = None
         #if trait == 'wild' or trait == 'wild_draw_4':
-        for index, card in enumerate(player.hand):
-            if trait == card.trait:
-                remove_index = index
-                break
+            
+        if player.china_hidden_accessible:
+            for index, card in enumerate(player.china_hidden):
+                if trait == card.trait:
+                    remove_index = index
+                    break
 
-        card = player.hand.pop(remove_index)
+            card = player.china_hidden.pop(remove_index)
+            
+        elif player.china_accessible:
+            for index, card in enumerate(player.china):
+                if trait == card.trait:
+                    remove_index = index
+                    break
+
+            card = player.china.pop(remove_index)            
+                       
+        else: 
+            for index, card in enumerate(player.hand):
+                if trait == card.trait:
+                    remove_index = index
+                    break
+
+            card = player.hand.pop(remove_index)           
+            
         self.played_cards.append(card)
         
         self._refill_hand(players)
@@ -113,8 +132,9 @@ class KarmaRound(object):
             hand = players[player_id].china
             
         #if china hidden accessible one chooses first and checks if it is feasable   
-        if players[player_id].china_hidden_accessible == True:
-            hand.append(players[player_id].china_hidden[0])
+        if players[player_id].china_hidden_accessible == True and players[player_id].china_hidden:
+            legal_actions.append(players[player_id].china_hidden[0].str)
+            return legal_actions
             
 
 
@@ -208,7 +228,7 @@ class KarmaRound(object):
         
         others_hand = []
         others_china = []
-        others_china_accessible = False
+        #others_china_accessible = False
         others_china_hidden = []
         for player in players:
             if player.player_id != player_id:
