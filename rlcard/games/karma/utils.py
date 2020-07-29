@@ -16,10 +16,9 @@ with open(os.path.join(ROOT_PATH, 'games/karma/jsondata/action_space.json'), 'r'
     ACTION_LIST = list(ACTION_SPACE.keys())
 
 # a map of color to its index
-#COLOR_MAP = {'d': 0, 'h': 1, 's': 2, 'c': 3} #diamonds,hearts,spades,clubs
+# COLOR_MAP = {'d': 0, 'h': 1, 's': 2, 'c': 3} #diamonds,hearts,spades,clubs
 
-COUNT_MAP = {'1': 0, '2': 1, '3': 2} #one, two or three cards of a trait
-
+COUNT_MAP = {'1': 0, '2': 1, '3': 2}  # one, two or three cards of a trait
 
 # a map of trait to its index
 TRAIT_MAP = {'4': 0, '5': 1, '6': 2, '7': 3, '8': 4, '9': 5, 'J': 6, 'Q': 7,
@@ -27,11 +26,12 @@ TRAIT_MAP = {'4': 0, '5': 1, '6': 2, '7': 3, '8': 4, '9': 5, 'J': 6, 'Q': 7,
 
 WILD = ['2', '3', '10']
 
-#WILD_DRAW_4 = ['r-wild_draw_4', 'g-wild_draw_4', 'b-wild_draw_4', 'y-wild_draw_4']
+
+# WILD_DRAW_4 = ['r-wild_draw_4', 'g-wild_draw_4', 'b-wild_draw_4', 'y-wild_draw_4']
 
 
 def init_deck():
-    ''' Generate uno deck of 52 cards
+    ''' Generate karma deck of 52 cards
     '''
     deck = []
     card_info = Card.info
@@ -62,6 +62,7 @@ def cards2list(cards):
         cards_list.append(card.get_str())
     return cards_list
 
+
 def get_cards_dict(cards):
     ''' Get the corresponding dict representation of cards
 
@@ -71,7 +72,7 @@ def get_cards_dict(cards):
     Returns:
         (dict): dict of cards
     '''
-       
+
     cards_dict = {}
     if cards:
         for card in cards:
@@ -80,7 +81,6 @@ def get_cards_dict(cards):
             else:
                 cards_dict[card] += 1
     return cards_dict
-
 
 
 def encode_hand(plane, hand):
@@ -93,18 +93,19 @@ def encode_hand(plane, hand):
     Returns:
         (array): 4*13 numpy array
     '''
-    
-    #1 card,2 cards ,3 cards, 4 cards
-    
+
+    # 1 card,2 cards ,3 cards, 4 cards
+
     plane = np.zeros((4, 13), dtype=int)
 
     hand = get_cards_dict(hand)
     for card, count in hand.items():
         card_info = card
-        #color = COLOR_MAP[card_info[0]]
+        # color = COLOR_MAP[card_info[0]]
         trait = TRAIT_MAP[card_info]
-        plane[count-1][trait] = 1
+        plane[count - 1][trait] = 1
     return plane
+
 
 def encode_target(plane, target):
     ''' Encode target and represerve it into plane
@@ -116,13 +117,12 @@ def encode_target(plane, target):
     Returns:
         (array): 4*13 numpy array 
     '''
-    
+
     target = get_cards_dict(target)
-    
+
     for card, count in target.items():
         card_info = card
-        #color = COLOR_MAP[card_info[0]]
+        # color = COLOR_MAP[card_info[0]]
         trait = TRAIT_MAP[card_info]
-        plane[count-1][trait] = 1
+        plane[count - 1][trait] = 1
     return plane
-

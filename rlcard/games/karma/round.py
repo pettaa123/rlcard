@@ -28,7 +28,7 @@ class KarmaRound(object):
         ''' Flip the top card of the card pile
 
         Returns:
-            (object of UnoCard): the top card in game
+            (object of KarmaCard): the top card in game
 
         '''
         top = self.dealer.flip_top_card()
@@ -67,7 +67,7 @@ class KarmaRound(object):
         
         self._refill_hand(players)
         
-        if not player.hand and player.china_hidden:
+        if not player.hand and not player.china_hidden:
             self.is_over = True
             self.winner = [self.current_player]
 
