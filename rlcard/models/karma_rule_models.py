@@ -1,4 +1,4 @@
-''' UNO rule models
+''' Karma rule models
 '''
 
 import numpy as np
