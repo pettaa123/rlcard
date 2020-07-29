@@ -40,7 +40,7 @@ class KarmaGame(object):
         self.round.flip_top_card()
 
         
-        # Deal 3 cards to each player to prepare for the game
+        # Deal 9 cards to each player to prepare for the game
         for player in self.players:
             self.dealer.deal_cards(player, 3)
 
