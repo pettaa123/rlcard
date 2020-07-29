@@ -12,7 +12,6 @@ class KarmaCard(object):
             trait (str): The trait of card
         '''
         
-        self.hidden = False
         self.type = card_type
         self.trait = trait
         self.str = self.get_str()

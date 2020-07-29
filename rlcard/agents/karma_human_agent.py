@@ -61,14 +61,18 @@ def _print_state(state, action_record):
 
     print('\n=============== Your Hand ===============')
     KarmaCard.print_cards(state['hand'])
-    print('')
-    print('=============== Last Card ===============')
+    print('\n=============== Your China ===============')
+    KarmaCard.print_cards(state['china'])
+    print('\n========= China Hidden remaining =========')
+    print(len(state['china_hidden']))
+    print('============== Last Card ==============')
     KarmaCard.print_cards(state['target'])
     print('')
     print('========== Players Card Number ===========')
     for i in range(state['player_num']):
         if i != state['current_player']:
             print('Player {} has {} cards.'.format(i, state['card_num'][i]))
+            
     print('======== Actions You Can Choose =========')
     for i, action in enumerate(state['legal_actions']):
         print(str(i)+': ', end='')

@@ -26,7 +26,6 @@ class KarmaDealer(object):
             player.hand.append(self.deck.pop())
             player.china.append(self.deck.pop())
             player.china_hidden.append(self.deck.pop())
-            player.china_hidden[-1].hidden = True
             
 
     def flip_top_card(self):

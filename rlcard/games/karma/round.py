@@ -67,7 +67,7 @@ class KarmaRound(object):
         
         self._refill_hand(players)
         
-        if not player.hand:
+        if not player.hand and player.china_hidden:
             self.is_over = True
             self.winner = [self.current_player]
 
@@ -89,7 +89,7 @@ class KarmaRound(object):
         if len(player.hand) > 0:
             player.china_hidden_accessible = False
             player.china_accessible = False
-        if len(player.hand) == 0 and len(player.china) > 0:
+        elif len(player.hand) == 0 and len(player.china) > 0:
             player.china_accessible = True
             player.china_hidden_accessible = False
         elif len(player.hand) == 0 and len(player.china) == 0 and len(player.china_hidden):
@@ -112,14 +112,10 @@ class KarmaRound(object):
         if players[player_id].china_accessible == True:
             hand = players[player_id].china
             
+        #if china hidden accessible one chooses first and checks if it is feasable   
         if players[player_id].china_hidden_accessible == True:
-            for card in hand:
-                legal_actions.append(card.str)
+            hand.append(players[player_id].china_hidden[0])
             
-            return legal_actions
-            
-        
-        
 
 
         #target is None
@@ -198,7 +194,7 @@ class KarmaRound(object):
         ''' Get player's state
 
         Args:
-            players (list): The list of UnoPlayer
+            players (list): The list of KarmaPlayer
             player_id (int): The id of the player
         '''
         state = {}
@@ -212,6 +208,7 @@ class KarmaRound(object):
         
         others_hand = []
         others_china = []
+        others_china_accessible = False
         others_china_hidden = []
         for player in players:
             if player.player_id != player_id:
