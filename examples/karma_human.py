@@ -14,7 +14,7 @@ human_agent = HumanAgent(env.action_num)
 random_agent = RandomAgent(env.action_num)
 cfr_agent = models.load('karma-rule-v1').agents[0]
 #env.set_agents([human_agent, cfr_agent])
-env.set_agents([human_agent, random_agent])
+env.set_agents([human_agent, cfr_agent])
 
 print(">> Karma rule model V1")
 

@@ -6,19 +6,20 @@ import os
 
 import rlcard
 from rlcard.agents import DQNAgent
-from rlcard.agents import RandomAgent
+#from rlcard.agents import RandomAgent
 from rlcard.utils.utils import set_global_seed, tournament
 from rlcard.utils import Logger
 
+from rlcard import models
 
 # Make environment
 env = rlcard.make('karma', config={'seed': 0})
 eval_env = rlcard.make('karma', config={'seed': 0})
 
 # Set the iterations numbers and how frequently we evaluate the performance
-evaluate_every = 100
-evaluate_num = 1000
-episode_num = 100000
+evaluate_every = 10
+evaluate_num = 100
+episode_num = 10000
 
 # The intial memory size
 memory_init_size = 1000
@@ -46,9 +47,15 @@ with tf.Session() as sess:
                      train_every=train_every,
                      state_shape=env.state_shape,
                      mlp_layers=[512,512])
-    random_agent = RandomAgent(action_num=eval_env.action_num)
-    env.set_agents([agent, random_agent])
-    eval_env.set_agents([agent, random_agent])
+    
+    cfr_agent = models.load('karma-rule-v1').agents[0]
+    
+    #random_agent = RandomAgent(action_num=eval_env.action_num)
+    #env.set_agents([agent, random_agent])
+    #eval_env.set_agents([agent, random_agent])
+    
+    env.set_agents([agent, cfr_agent])
+    eval_env.set_agents([agent, cfr_agent])
 
     # Initialize global variables
     sess.run(tf.global_variables_initializer())

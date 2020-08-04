@@ -84,19 +84,21 @@ class KarmaRound(object):
                         player.hand.remove(card)
                         break
                         
-                              
             self.played_cards.append(card)
-            
+        
         self._refill_hand(players)
               
             
         if not player.hand and not player.china_hidden:
             self.is_over = True
             self.winner = [self.current_player]
+            
+        if self.played_cards.count(self.played_cards[-1]) == 4:
+            self._perform_four_sames(players)
 
 
         # perform the non special or wild action
-        if (trait != '8' or self.skipped) and trait != '10':
+        elif (trait != '8' or self.skipped) and trait != '10':
             self.skipped = False
             self.current_player = (self.current_player + self.direction) % self.num_players
             if trait != '3':
@@ -283,7 +285,15 @@ class KarmaRound(object):
         while len(players[self.current_player].hand) < 3 and self.dealer.deck:
             card = self.dealer.deck.pop()
             players[self.current_player].hand.append(card)
-
+    
+    def _perform_four_sames(self,players):
+        current = self.current_player
+        direction = self.direction
+        num_players = self.num_players
+        
+        self.removed_cards.extend(self.played_cards)
+        self.played_cards.clear()
+        self.target.clear()
 
     def _perform_non_number_action(self, players, card):
         current = self.current_player

@@ -2,6 +2,7 @@
 '''
 
 import numpy as np
+import random
 
 import rlcard
 from rlcard.models.model import Model
@@ -39,20 +40,34 @@ class KarmaRuleAgentV1(object):
         else:
             legal_actions = state['legal_actions']
             state = state['obs']
-            
-            
 
         if 'draw' in legal_actions:
             return 'draw'
-
         
+        if random.random() < 0.3:     
+            return random.choice(legal_actions)
+        
+        #specialities
+        sames=0
+        target=''
+        played_cards = state['played_cards']
+        if played_cards:
+            sames = played_cards.count(played_cards[-1])
+            target = played_cards[-1]
+        
+        #lowest value
         for iter_action in legal_actions:
-            val = KarmaCard.info['trait'].index(str(iter_action))
-            if val < lowest_val:
-                lowest_val = val
-                action = iter_action
-                
+            val,count = iter_action.split(':')
+            if val == target and int(count) + sames == 4:
+                return iter_action
+            else:
+                val = KarmaCard.info['order'].index(str(iter_action))
+                if val < lowest_val:
+                    lowest_val = val
+                    action = iter_action
+            
         return action
+                
 
     def eval_step(self, state):
         ''' Step for evaluation. The same to step
