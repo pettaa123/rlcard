@@ -13,6 +13,7 @@ class KarmaRuleAgentV1(object):
 
     def __init__(self):
         self.use_raw = True
+        #self.use_raw = False
 
     def step(self, state):
         ''' Predict the action given raw state. A naive rule. Choose the lowest value
@@ -27,32 +28,26 @@ class KarmaRuleAgentV1(object):
         Returns:
             action (str): Predicted action
         '''
-
-        legal_actions = state['raw_legal_actions']
-        state = state['raw_obs']
-        if 'draw' in legal_actions:
-            return 'draw'
-
-        hand = state['hand']
-
-        '''
-        # If we have wild-4 simply play it and choose color that appears most in hand
-        for action in legal_actions:
-            if action.split('-')[1] == 'wild_draw_4':
-                color_nums = self.count_colors(self.filter_wild(hand))
-                action = max(color_nums, key=color_nums.get) + '-wild_draw_4'
-                return action
-        
-
-        # Without wild-4, we randomly choose one
-        action = np.random.choice(self.filter_wild(legal_actions))
-        '''
         
         # choose card with lowest value in action list
         lowest_val=999
         
+        if 'raw_legal_actions' in state:
+            legal_actions = state['raw_legal_actions']
+            state = state['raw_obs']
+            
+        else:
+            legal_actions = state['legal_actions']
+            state = state['obs']
+            
+            
+
+        if 'draw' in legal_actions:
+            return 'draw'
+
+        
         for iter_action in legal_actions:
-            val = KarmaCard.info['trait'].index(iter_action)
+            val = KarmaCard.info['trait'].index(str(iter_action))
             if val < lowest_val:
                 lowest_val = val
                 action = iter_action
@@ -69,10 +64,10 @@ class KarmaRuleAgentV1(object):
         ''' Filter the wild cards. If all are wild cards, we do not filter
 
         Args:
-            hand (list): A list of UNO card string
+            hand (list): A list of Karma card string
 
         Returns:
-            filtered_hand (list): A filtered list of UNO string
+            filtered_hand (list): A filtered list of Karma string
         '''
         filtered_hand = []
         for card in hand:
@@ -89,7 +84,7 @@ class KarmaRuleAgentV1(object):
         ''' Count the number of cards in each color in hand
 
         Args:
-            hand (list): A list of UNO card string
+            hand (list): A list of Karma card string
 
         Returns:
             color_nums (dict): The number cards of each color

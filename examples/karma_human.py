@@ -5,12 +5,16 @@ import rlcard
 from rlcard import models
 from rlcard.agents.karma_human_agent import HumanAgent, _print_action
 
+from rlcard.agents import RandomAgent
+
 # Make environment and enable human mode
 # Set 'record_action' to True because we need it to print results
 env = rlcard.make('karma', config={'record_action': True})
 human_agent = HumanAgent(env.action_num)
+random_agent = RandomAgent(env.action_num)
 cfr_agent = models.load('karma-rule-v1').agents[0]
-env.set_agents([human_agent, cfr_agent])
+#env.set_agents([human_agent, cfr_agent])
+env.set_agents([human_agent, random_agent])
 
 print(">> Karma rule model V1")
 
