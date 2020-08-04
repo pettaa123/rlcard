@@ -96,12 +96,9 @@ def encode_hand(plane, hand):
 
     # 1 card,2 cards ,3 cards, 4 cards
 
-    plane = np.zeros((4, 13), dtype=int)
-
-    hand = get_cards_dict(hand)
-    for card, count in hand.items():
+    hand_ = get_cards_dict(hand)
+    for card, count in hand_.items():
         card_info = card
-        # color = COLOR_MAP[card_info[0]]
         trait = TRAIT_MAP[card_info]
         plane[count - 1][trait] = 1
     return plane

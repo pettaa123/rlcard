@@ -13,7 +13,7 @@ class KarmaEnv(Env):
         self.name = 'karma'
         self.game = Game()
         super().__init__(config)
-        self.state_shape = [9, 13]
+        self.state_shape = [5, 4, 13]
 
     def _load_model(self):
         ''' Load pretrained/rule model
@@ -25,10 +25,12 @@ class KarmaEnv(Env):
         return models.load('karma-rule-v1')
 
     def _extract_state(self, state):
-        obs = np.zeros((3, 4, 13), dtype=int)
+        obs = np.zeros((5, 4, 13), dtype=int)
         encode_hand(obs[0], state['hand'])
-        encode_target(obs[1], state['target'])
-        encode_hand(obs[2], state['others_hand'])
+        encode_hand(obs[1], state['china'])
+        encode_target(obs[2], state['target'])
+        encode_hand(obs[3], state['others_hand'])
+        encode_hand(obs[4], state['others_china'])
         legal_action_id = self._get_legal_actions()
         extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
         if self.allow_raw_data:

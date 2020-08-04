@@ -51,58 +51,63 @@ class KarmaRound(object):
             return None
         player = players[self.current_player]
         #card_info = action.split('-')
+        action_info = action.split(':')
         #number_of_cards_to_play = card_info[1]
-        card_info=action
-        trait = card_info
+        #card_info=action
+        trait = action_info[0]
         # remove corresponding card
-        remove_index = None
+        #remove_index = None
         #if trait == 'wild' or trait == 'wild_draw_4':
             
-        if player.china_hidden_accessible:
-            for index, card in enumerate(player.china_hidden):
-                if trait == card.trait:
-                    remove_index = index
-                    break
-
-            card = player.china_hidden.pop(remove_index)
-            
-        elif player.china_accessible:
-            for index, card in enumerate(player.china):
-                if trait == card.trait:
-                    remove_index = index
-                    break
-
-            card = player.china.pop(remove_index)            
-                       
-        else: 
-            for index, card in enumerate(player.hand):
-                if trait == card.trait:
-                    remove_index = index
-                    break
-
-            card = player.hand.pop(remove_index)           
-            
-        self.played_cards.append(card)
+        number = 0
         
+            
+        while number < int(action_info[1]):
+            
+            number += 1
+            
+            if player.china_hidden_accessible:                      
+                for card in player.china_hidden:
+                    if trait == card.trait:
+                        player.china_hidden.remove(card)
+                        break
+                           
+            elif player.china_accessible:
+                for card in player.china:
+                    if trait == card.trait:
+                        player.china.remove(card)
+                        break
+                                              
+            else: 
+                for card in player.hand:
+                    if trait == card.trait:
+                        player.hand.remove(card)
+                        break
+                        
+                              
+            self.played_cards.append(card)
+            
         self._refill_hand(players)
-        
+              
+            
         if not player.hand and not player.china_hidden:
             self.is_over = True
             self.winner = [self.current_player]
 
 
         # perform the non special or wild action
-        if (card.trait != '8' or self.skipped) and card.trait != '10':
+        if (trait != '8' or self.skipped) and trait != '10':
             self.skipped = False
             self.current_player = (self.current_player + self.direction) % self.num_players
-            if card.trait != '3':
+            if trait != '3':
                 self.target.clear()
-                self.target.append(card)
+                self.target.append(self.played_cards[-1])
             
 
         # perform non-number action
         else:
-            self._perform_non_number_action(players, card) #non number is 8 and 10
+            self._perform_non_number_action(players, self.played_cards[-1]) #non number is 8 and 10
+                
             
     def check_accesibility(self, player):
         if len(player.hand) > 0:
@@ -114,12 +119,47 @@ class KarmaRound(object):
         elif len(player.hand) == 0 and len(player.china) == 0 and len(player.china_hidden):
             player.china_hidden_accessible = True
             player.china_accessible = False
+            
+    def get_legal_actions_dict(self, cards):
+        ''' Get the corresponding dict representation of cards
+        
+        Args:
+            cards (list): list of string of cards
+
+        Returns:
+            (dict): dict of cards
+        '''
+
+        cards_dict = {}
+        if cards:
+            for card in cards:
+                if card.str not in cards_dict:
+                    cards_dict[card.str] = 1
+                else:
+                    cards_dict[card.str] += 1
+        return cards_dict
+    
+    def get_legal_actions_list(self, actions_dict):
+        ''' Get the corresponding list representation of legal actions
+        
+        Args:
+            cards (list): list of string of cards
+
+        Returns:
+            (dict): dict of cards
+        '''
+        
+        actions_list = []
+        for action, count in actions_dict.items():
+            i=1
+            while i <= count:
+                actions_list.append(str(action) + ":" + str(i))
+                i += 1
+                                
+        return actions_list
 
     def get_legal_actions(self, players, player_id):
-        #wild_flag = 0
-        #wild_draw_4_flag = 0
-        legal_actions = []
-        #wild_4_actions = []
+        legal_actions_dict = {}
         
         target = self.target
         
@@ -131,84 +171,62 @@ class KarmaRound(object):
         if players[player_id].china_accessible == True:
             hand = players[player_id].china
             
-        #if china hidden accessible one chooses first and checks if it is feasable   
+        #if china hidden accessible, one chooses first and checks if it is feasable   
         if players[player_id].china_hidden_accessible == True and players[player_id].china_hidden:
-            legal_actions.append(players[player_id].china_hidden[0].str)
-            return legal_actions
-            
-
+            legal_actions_dict = {}
+            legal_actions_dict[players[player_id].china_hidden[0].str] = 1
+            return self.get_legal_actions_list(legal_actions_dict)
 
         #target is None
         if not target:
-            for card in hand:
-                legal_actions.append(card.str)
-            return legal_actions
+            legal_actions_dict = self.get_legal_actions_dict(hand)
+            return self.get_legal_actions_list(self.get_legal_actions_dict(hand))
+            
                                 
 
         for card in hand:
             #2,3,10 are wilds
             if card.type == 'wild':
-                legal_actions.append(card.str)
+                if card.str not in legal_actions_dict:
+                    legal_actions_dict[card.str] = 1
+                else:
+                    legal_actions_dict[card.str] += 1
                     
             elif target[0].get_index() == KarmaCard.info['trait'].index('2'): # one can act every card on twos
-                legal_actions.append(card.str)
+                if card.str not in legal_actions_dict:
+                    legal_actions_dict[card.str] = 1
+                else:
+                    legal_actions_dict[card.str] += 1
             # one can act every card on threes if it is first played card
             elif target[0].get_index() == KarmaCard.info['trait'].index('3'): 
-                legal_actions.append(card.str)          
+                    if card.str not in legal_actions_dict:
+                        legal_actions_dict[card.str] = 1
+                    else:
+                        legal_actions_dict[card.str] += 1     
 
                     
             elif target[0].get_index() == KarmaCard.info['trait'].index('7'): #value 7 -> lower
                 if card.get_index() <= target[0].get_index():
-                    legal_actions.append(card.str)
+                    if card.str not in legal_actions_dict:
+                        legal_actions_dict[card.str] = 1
+                    else:
+                        legal_actions_dict[card.str] += 1
 
                     
             elif card.get_index() >= target[0].get_index():
-                legal_actions.append(card.str)
+                if card.str not in legal_actions_dict:
+                    legal_actions_dict[card.str] = 1
+                else:
+                    legal_actions_dict[card.str] += 1
                 
-        if not legal_actions:
-            legal_actions = ['draw']
+        if not legal_actions_dict:
+            return ['draw']
                 
 
-        return legal_actions
-                
-            
-        
-        # target is aciton card or number card
-        
-        
-        # #if target.type == 'wild':
-        # for card in hand:
-        #     if card.type == 'wild':
-        #         if card.trait == 'wild_draw_4':
-        #             if wild_draw_4_flag == 0:
-        #                 wild_draw_4_flag = 1
-        #                 wild_4_actions.extend(WILD_DRAW_4)
-        #         else:
-        #             if wild_flag == 0:
-        #                 wild_flag = 1
-        #                 legal_actions.extend(WILD)
-        #     elif card.color == target.color:
-        #         legal_actions.append(card.str)
+        return self.get_legal_actions_list(legal_actions_dict)
+    
 
-        # target is aciton card or number card
-        #else:
-        # for card in hand:
-        #     if card.type == 'wild':
-        #         if card.trait == 'wild_draw_4':
-        #             if wild_draw_4_flag == 0:
-        #                 wild_draw_4_flag = 1
-        #                 wild_4_actions.extend(WILD_DRAW_4)
-        #         else:
-        #             if wild_flag == 0:
-        #                 wild_flag = 1
-        #                 legal_actions.extend(WILD)
-        #     elif card.color == target.color or card.trait == target.trait:
-        #         legal_actions.append(card.str)
-        # if not legal_actions:
-        #     legal_actions = wild_4_actions
-        # if not legal_actions:
-        #     legal_actions = ['draw']
-        # return legal_actions
+                
 
     def get_state(self, players, player_id):
         ''' Get player's state
@@ -289,26 +307,4 @@ class KarmaRound(object):
             self.played_cards.clear()
             self.target.clear()
             #current = current
-            '''
-        # perform draw_2 card
-        elif card.trait == 'draw_2':
-            if len(self.dealer.deck) < 2:
-                self.replace_deck()
-                #self.is_over = True
-                #self.winner = UnoJudger.judge_winner(players)
-                #return None
-            self.dealer.deal_cards(players[(current + direction) % num_players], 2)
-            current = (current + direction) % num_players
 
-        # perform wild_draw_4 card
-        elif card.trait == 'wild_draw_4':
-            if len(self.dealer.deck) < 4:
-                self.replace_deck()
-                #self.is_over = True
-                #self.winner = UnoJudger.judge_winner(players)
-                #return None
-            self.dealer.deal_cards(players[(current + direction) % num_players], 4)
-            current = (current + direction) % num_players
-        self.current_player = (current + self.direction) % num_players
-        self.target = card
-        '''
