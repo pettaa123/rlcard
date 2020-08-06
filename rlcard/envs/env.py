@@ -190,7 +190,7 @@ class Env(object):
         # Loop to play the game
         trajectories[player_id].append(state)
         
-        debug=0
+        bug=0
         
         while not self.is_over():
             # Agent plays
@@ -201,6 +201,7 @@ class Env(object):
 
             # Environment steps
             next_state, next_player_id = self.step(action, self.agents[player_id].use_raw)
+            #print(next_player_id)
             # Save action
             trajectories[player_id].append(action)
 
@@ -212,10 +213,14 @@ class Env(object):
             if not self.game.is_over():
                 trajectories[player_id].append(state)
                 
-            debug=debug+1
-            print(debug)
+            bug=bug+1
+            if bug/1000 > 1:
+                print('game loop error')
+                bug=0
             
-
+        
+        print('finished')
+        
         # Add a final state to all the players
         for player_id in range(self.player_num):
             state = self.get_state(player_id)

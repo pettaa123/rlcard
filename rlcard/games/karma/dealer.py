@@ -22,10 +22,24 @@ class KarmaDealer(object):
             player (object): The object of DoudizhuPlayer
             num (int): The number of cards to be dealed
         '''
+        
+        hand_china_cards = []
+        
+        for _ in range(2*num):
+            hand_china_cards.append(self.deck.pop())
+        
+        #sort best cards from hand to china
+        sorted_list = sorted(hand_china_cards, key=lambda obj: obj.get_index())
+        
         for _ in range(num):
-            player.hand.append(self.deck.pop())
-            player.china.append(self.deck.pop())
+            player.china.append(sorted_list.pop())
+                       
+        for _ in range(num):
+            player.hand.append(sorted_list.pop())           
             player.china_hidden.append(self.deck.pop())
+            
+        
+        
             
 
     def flip_top_card(self):
