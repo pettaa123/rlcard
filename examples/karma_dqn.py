@@ -12,20 +12,23 @@ from rlcard.utils import Logger
 
 from rlcard import models
 
+
+
 # Make environment
 env = rlcard.make('karma', config={'seed': 0})
 eval_env = rlcard.make('karma', config={'seed': 0})
 
 # Set the iterations numbers and how frequently we evaluate the performance
-evaluate_every = 10
-evaluate_num = 100
-episode_num = 10000
+evaluate_every = 100
+evaluate_num = 1000
+episode_num = 100000
 
 # The intial memory size
 memory_init_size = 1000
 
 # Train the agent every X steps
 train_every = 1
+
 
 # The paths for saving the logs and learning curves
 log_dir = './experiments/karma_dqn_result/'
@@ -88,4 +91,5 @@ with tf.Session() as sess:
         os.makedirs(save_dir)
     saver = tf.train.Saver()
     saver.save(sess, os.path.join(save_dir, 'model'))
+    
     

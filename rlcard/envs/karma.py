@@ -71,7 +71,7 @@ class KarmaEnv(Env):
         #add china cards
         #add china accessible
         state['played_cards'] = cards2list(self.game.round.played_cards)
-        state['target'] = cards2list(self.game.round.target)
+        state['target'] = self.game.round.target.str
         state['current_player'] = self.game.round.current_player
         state['legal_actions'] = self.game.round.get_legal_actions(
             self.game.players, state['current_player'])

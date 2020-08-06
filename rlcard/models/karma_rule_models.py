@@ -14,7 +14,6 @@ class KarmaRuleAgentV1(object):
 
     def __init__(self):
         self.use_raw = True
-        #self.use_raw = False
 
     def step(self, state):
         ''' Predict the action given raw state. A naive rule. Choose the lowest value
@@ -40,25 +39,73 @@ class KarmaRuleAgentV1(object):
         else:
             legal_actions = state['legal_actions']
             state = state['obs']
-
-        if 'draw' in legal_actions:
-            return 'draw'
+        #take only draw into consideration when all cards on hands are known
+        if random.random() < 0.03: 
+            return 'draw:1'
         
-        if random.random() < 0.3:     
-            return random.choice(legal_actions)
+        if random.random() < 0.1:
+            draw = 'draw:1'
+            while draw == 'draw:1':
+                draw=random.choice(legal_actions)
+            return draw
+        
+        
+        played_cards = state['played_cards']
+        target=''
+        if played_cards: 
+            target = played_cards[-1]
+        sames=1
+        # play a 10 if played cards amount gets too big
+        if len(played_cards) > 7 and random.random() > 0.2:
+            for iter_action in legal_actions:
+                val,count = iter_action.split(':')
+                if val == '10' and int(count) == '1':
+                    return iter_action
+            
+        
+        #while there are cards in the deck dont throw multiple good cards.
+        if state['deck']:
+        #check for sames in a row in low value are      
+            i=0
+            while len(played_cards) > 1+i and i < 5:
+                i = i+1
+                if played_cards[-i] == played_cards[-1-i]:
+                    sames = sames+1
+                    i = i+1
+                else:
+                    break
+                       
+            #lowest value
+            for iter_action in legal_actions:
+                val,count = iter_action.split(':')
+                if target:
+                    if val == target and int(count) + sames == 4 and KarmaCard.info['trait'].index(target) < 8:
+                        return iter_action
+                
+                val = KarmaCard.info['order_start'].index(str(iter_action))
+                if val < lowest_val:
+                    lowest_val = val
+                    action = iter_action
+            
+            return action
+
         
         #specialities
-        sames=0
-        target=''
-        played_cards = state['played_cards']
-        if played_cards:
-            sames = played_cards.count(played_cards[-1])
-            target = played_cards[-1]
-        
+        #check for sames in a row
+
+        i=0
+        while len(played_cards) > 1+i and i < 5:
+            i = i+1
+            if played_cards[-i] == played_cards[-1-i]:
+                sames = sames+1
+                i = i+1
+            else:
+                break
+                       
         #lowest value
         for iter_action in legal_actions:
             val,count = iter_action.split(':')
-            if val == target and int(count) + sames == 4:
+            if val == target and int(count) + sames == 4 and val != '10':
                 return iter_action
             else:
                 val = KarmaCard.info['order'].index(str(iter_action))
