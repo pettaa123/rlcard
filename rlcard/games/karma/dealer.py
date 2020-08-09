@@ -24,7 +24,7 @@ class KarmaDealer(object):
         '''
         
         hand_china_cards = []
-        ''
+        
         # index_of_four = 0
         
         # for _ in range(2*num):
@@ -35,7 +35,7 @@ class KarmaDealer(object):
         #         else:
         #             index_of_four = 0
         #     hand_china_cards.append(self.deck.pop(index_of_four))
-        ''
+        
         
         for _ in range(2*num):
             hand_china_cards.append(self.deck.pop())

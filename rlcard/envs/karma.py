@@ -41,6 +41,17 @@ class KarmaEnv(Env):
                 a for a in state['legal_actions']]
         if self.record_action:
             extracted_state['action_record'] = self.action_recorder
+        # print('HAND ')
+        # print(state['hand'])
+        # print('OTHER_HAND ')
+        # print(state['others_hand'])
+        # print('LEGAL ACRTIONS ')
+        # print(extracted_state['raw_legal_actions'])
+        # print('PLAYED CARDS ')
+        # print(state['played_cards'])
+        # print('-----------')
+
+        
         return extracted_state
 
     def get_payoffs(self):
