@@ -191,7 +191,7 @@ class Env(object):
         trajectories[player_id].append(state)
         
         bug=0
-        
+        counter=0
         while not self.is_over():
             # Agent plays
             if not is_training:
@@ -214,12 +214,14 @@ class Env(object):
                 trajectories[player_id].append(state)
                 
             bug=bug+1
-            if bug/1000 > 1:
-                print('game loop error')
+            counter=counter+1
+            if bug/10000 > 1:
+                print('played' + str(counter) + 'rounds')
                 bug=0
+                
             
         
-        print('finished')
+        #print('finished')
         
         # Add a final state to all the players
         for player_id in range(self.player_num):

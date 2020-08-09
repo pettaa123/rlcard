@@ -82,8 +82,17 @@ def get_cards_dict(cards):
                 cards_dict[card] += 1
     return cards_dict
 
+def decode_cards(plane):
+    result = []
+    for column in plane.T:
+        some_function(column)
+        if entry == 1:
+            card = _deck[i]
+            result.append(card)
+    return result
 
-def encode_hand(plane, hand):
+
+def encode_cards(plane, hand):
     ''' Encode hand and represerve it into plane
 
     Args:

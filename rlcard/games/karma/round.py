@@ -100,7 +100,7 @@ class KarmaRound(object):
             self.is_over = True
             self.winner = [self.current_player]
         #last 4 played cards
-        sum = 0
+        sum = 1
         for p in self.played_cards[-4:]:
             if p.trait == self.played_cards[-1]:
                 sum += 1
