@@ -20,7 +20,7 @@ eval_env = rlcard.make('karma', config={'seed': 0})
 
 # Set the iterations numbers and how frequently we evaluate the performance
 evaluate_every = 10
-evaluate_num = 1000
+evaluate_num = 100
 episode_num = 1000
 
 # The intial memory size
@@ -53,13 +53,13 @@ with tf.Session() as sess:
     
 
     
-    # random_agent = RandomAgent(action_num=eval_env.action_num)
-    # env.set_agents([agent, random_agent])
-    # eval_env.set_agents([agent, random_agent])
+    random_agent = RandomAgent(action_num=eval_env.action_num)
+    env.set_agents([agent, random_agent])
+    eval_env.set_agents([agent, random_agent])
     
-    rule_agent = models.load('karma-rule-v1').agents[0]
-    env.set_agents([rule_agent, agent])
-    eval_env.set_agents([rule_agent, agent])
+    # rule_agent = models.load('karma-rule-v1').agents[0]
+    # env.set_agents([rule_agent, agent])
+    # eval_env.set_agents([rule_agent, agent])
 
     # Initialize global variables
     sess.run(tf.global_variables_initializer())

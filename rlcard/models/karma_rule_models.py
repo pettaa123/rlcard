@@ -107,11 +107,10 @@ class KarmaRuleAgentV1(object):
             if target != '':
                 if val == target.str and int(count) + sames == 4 and val != '10' and val != '3':
                     return iter_action
-            else:
-                val = KarmaCard.info['order'].index(str(iter_action))
-                if val < lowest_val:
-                    lowest_val = val
-                    action = iter_action
+            val = KarmaCard.info['order'].index(str(iter_action))
+            if val < lowest_val:
+                lowest_val = val
+                action = iter_action
             
         return action
                 
