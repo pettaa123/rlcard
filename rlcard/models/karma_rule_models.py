@@ -59,26 +59,21 @@ class KarmaRuleAgentV1(object):
         target=''
         if played_cards: 
             target = played_cards[-1]
-        sames=1
+            
+
+        
         # play a 10 if played cards amount gets too big
         if len(played_cards) > 7 and random.random() > 0.2:
             for iter_action in legal_actions:
                 val,count = iter_action.split(':')
                 if val == '10' and int(count) == '1':
                     return iter_action
+
+                       
             
         
         #while there are cards in the deck dont throw multiple good cards.
         if state['deck']:
-        #check for sames in a row in low value are      
-            # i=0
-            # while len(played_cards) > 1+i and i < 5:
-            #     i = i+1
-            #     if played_cards[-i] == played_cards[-1-i]:
-            #         sames = sames+1
-            #         i = i+1
-            #     else:
-            #         break
                        
             #lowest value
             for iter_action in legal_actions:
@@ -94,9 +89,8 @@ class KarmaRuleAgentV1(object):
             #return encoded action 
             return action
 
-        
-        #specialities
         #check for sames in a row
+        sames=1
 
         i=0
         while len(played_cards) > 1+i and i < 5:
@@ -106,12 +100,13 @@ class KarmaRuleAgentV1(object):
                 i = i+1
             else:
                 break
-                       
+
         #lowest value
         for iter_action in legal_actions:
             val,count = iter_action.split(':')
-            if val == target and int(count) + sames == 4 and val != '10' and val != '3':
-                return iter_action
+            if target != '':
+                if val == target.str and int(count) + sames == 4 and val != '10' and val != '3':
+                    return iter_action
             else:
                 val = KarmaCard.info['order'].index(str(iter_action))
                 if val < lowest_val:

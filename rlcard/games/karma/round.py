@@ -98,7 +98,7 @@ class KarmaRound(object):
             
         if not player.hand and not player.china_hidden:
             self.is_over = True
-            print('Player ' + str(self.current_player) + ' won')
+            #print('Player ' + str(self.current_player) + ' won')
             self.winner = [self.current_player]
         #last 4 played cards
         sum = 0
