@@ -43,7 +43,6 @@ class KarmaCard(object):
 
 
         return self.info['trait'].index(self.trait)
-        
 
 
     @staticmethod

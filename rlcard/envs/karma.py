@@ -2,7 +2,7 @@ import numpy as np
 
 from rlcard.envs import Env
 from rlcard.games.karma import Game
-from rlcard.games.karma.utils import encode_hand, encode_target
+from rlcard.games.karma.utils import encode_cards, encode_target
 from rlcard.games.karma.utils import ACTION_SPACE, ACTION_LIST
 from rlcard.games.karma.utils import cards2list
 
@@ -13,7 +13,7 @@ class KarmaEnv(Env):
         self.name = 'karma'
         self.game = Game()
         super().__init__(config)
-        self.state_shape = [5, 4, 13]
+        self.state_shape = [7, 4, 13]
 
     def _load_model(self):
         ''' Load pretrained/rule model
@@ -25,12 +25,14 @@ class KarmaEnv(Env):
         return models.load('karma-rule-v1')
 
     def _extract_state(self, state):
-        obs = np.zeros((5, 4, 13), dtype=int)
-        encode_hand(obs[0], state['hand'])
-        encode_hand(obs[1], state['china'])
+        obs = np.zeros((7, 4, 13), dtype=int)
+        encode_cards(obs[0], state['hand'])
+        encode_cards(obs[1], state['china'])
         encode_target(obs[2], state['target'])
-        encode_hand(obs[3], state['others_hand'])
-        encode_hand(obs[4], state['others_china'])
+        encode_cards(obs[3], state['others_hand'])
+        encode_cards(obs[4], state['others_china'])
+        encode_cards(obs[5], state['played_cards'])
+        encode_cards(obs[6], state['removed_cards'])
         legal_action_id = self._get_legal_actions()
         extracted_state = {'obs': obs, 'legal_actions': legal_action_id}
         if self.allow_raw_data:

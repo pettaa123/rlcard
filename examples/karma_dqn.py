@@ -6,7 +6,7 @@ import os
 
 import rlcard
 from rlcard.agents import DQNAgent
-#from rlcard.agents import RandomAgent
+from rlcard.agents import RandomAgent
 from rlcard.utils.utils import set_global_seed, tournament
 from rlcard.utils import Logger
 
@@ -53,12 +53,12 @@ with tf.Session() as sess:
     
     cfr_agent = models.load('karma-rule-v1').agents[0]
     
-    #random_agent = RandomAgent(action_num=eval_env.action_num)
-    #env.set_agents([agent, random_agent])
-    #eval_env.set_agents([agent, random_agent])
+    random_agent = RandomAgent(action_num=eval_env.action_num)
+    env.set_agents([agent, random_agent])
+    eval_env.set_agents([agent, random_agent])
     
-    env.set_agents([agent, cfr_agent])
-    eval_env.set_agents([agent, cfr_agent])
+    #env.set_agents([agent, cfr_agent])
+    #eval_env.set_agents([agent, cfr_agent])
 
     # Initialize global variables
     sess.run(tf.global_variables_initializer())
