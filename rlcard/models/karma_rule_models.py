@@ -120,50 +120,6 @@ class KarmaRuleAgentV1(object):
         '''
         return self.step(state), []
 
-    # @staticmethod
-    # def filter_wild(hand):
-    #     ''' Filter the wild cards. If all are wild cards, we do not filter
-
-    #     Args:
-    #         hand (list): A list of Karma card string
-
-    #     Returns:
-    #         filtered_hand (list): A filtered list of Karma string
-    #     '''
-    #     filtered_hand = []
-    #     for card in hand:
-    #         if not card[2:6] == 'wild':
-    #             filtered_hand.append(card)
-
-    #     if len(filtered_hand) == 0:
-    #         filtered_hand = hand
-
-    #     return filtered_hand
-    # @staticmethod
-    # def all_hand_cards_known(hand, others_hand):
-    #     if len(hand) == sum(1 for c in hand if c.get_known() ==True):
-    #         if len(others_hand) == sum(1 for c in others_hand if c.get_known() ==True):
-    #             return True
-        
-
-    # @staticmethod
-    # def count_colors(hand):
-    #     ''' Count the number of cards in each color in hand
-
-    #     Args:
-    #         hand (list): A list of Karma card string
-
-    #     Returns:
-    #         color_nums (dict): The number cards of each color
-    #     '''
-    #     color_nums = {}
-    #     for card in hand:
-    #         color = card[0]
-    #         if color not in color_nums:
-    #             color_nums[color] = 0
-    #         color_nums[color] += 1
-
-    #     return color_nums
 
 class KarmaRuleModelV1(Model):
     ''' Karma Rule Model version 1
