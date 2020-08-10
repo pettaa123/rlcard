@@ -19,9 +19,9 @@ env = rlcard.make('karma', config={'seed': 0})
 eval_env = rlcard.make('karma', config={'seed': 0})
 
 # Set the iterations numbers and how frequently we evaluate the performance
-evaluate_every = 10
-evaluate_num = 100
-episode_num = 1000
+evaluate_every = 1
+evaluate_num = 10
+episode_num = 100
 
 # The intial memory size
 memory_init_size = 1000
@@ -45,11 +45,10 @@ with tf.Session() as sess:
     agent = DQNAgent(sess,
                      scope='dqn',
                      action_num=env.action_num,
-                     replay_memory_size=20000,
                      replay_memory_init_size=memory_init_size,
                      train_every=train_every,
                      state_shape=env.state_shape,
-                     mlp_layers=[512,512])
+                     mlp_layers=[1024,1024])
     
 
     
